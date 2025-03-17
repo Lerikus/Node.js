@@ -1,0 +1,12 @@
+{
+  "name": "ukol_3",
+  "version": "1.0.0",
+  "description": "ukol 3",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
