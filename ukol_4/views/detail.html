@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width", initial-scale=1.0>
+        <title>Todo Detail</title>
+    </head>
+    <body>
+        <h1>Todo Detail</h1>
+        
+        <div>
+            <h2><%= todo.title %></h2>
+            <p>Status: <%= todo.completed ? 'Completed' : 'Not completed' %></p>
+            
+            <div>
+                <% if (todo.completed) { %>
+                    <a href="/todos/<%= todo.id %>/toggle?return_to=detail">[undone]</a>
+                <% } else { %>
+                    <a href="/todos/<%= todo.id %>/toggle?return_to=detail">[done]</a>
+                <% } %>
+                <a href="/todos/<%= todo.id %>/remove">[delete]</a>
+            </div>
+            
+            <form action="/todos/<%= todo.id %>/update" method="POST">
+                <h3>Update Title</h3>
+                <input type="text" name="title" value="<%= todo.title %>" required>
+                <button type="submit">Update</button>
+            </form>
+            
+            <p><a href="/">Back to Todo List</a></p>
+        </div>
+    </body>
+</html>
