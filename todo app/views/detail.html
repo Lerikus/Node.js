@@ -4,12 +4,20 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width", initial-scale=1.0>
         <title>Todo Detail</title>
+        <style>
+            .priority-low { color: yellowgreen; }
+            .priority-normal { color: orange; }
+            .priority-high { color: red; }
+        </style>
     </head>
     <body>
         <h1>Todo Detail</h1>
         
         <div>
-            <h2><%= todo.title %></h2>
+            <h2>
+                <%= todo.title %>
+                <small>[Priority: <span class="priority-<%= todo.priority %>"><%= todo.priority %></span>]</small>
+            </h2>
             <p>Status: <%= todo.completed ? 'Completed' : 'Not completed' %></p>
             
             <div>
@@ -24,6 +32,14 @@
             <form action="/todos/<%= todo.id %>/update" method="POST">
                 <h3>Update Title</h3>
                 <input type="text" name="title" value="<%= todo.title %>" required>
+                <div>
+                    <label for="priority">Priority:</label>
+                    <select id="priority" name="priority">
+                        <% priorities.forEach(p => { %>
+                            <option value="<%= p %>" <%= todo.priority === p ? 'selected' : '' %>><%= p %></option>
+                        <% }) %>
+                    </select>
+                </div>
                 <button type="submit">Update</button>
             </form>
             

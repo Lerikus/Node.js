@@ -36,7 +36,10 @@ app.get("/todo/:id", async(c) => {
     
     if (!todo) return c.notFound();
     
-    const rendered = await renderFile("views/detail.html", { todo });
+    const rendered = await renderFile("views/detail.html", { 
+        todo,
+        priorities: ["low", "normal", "high"]
+    });
     return c.html(rendered);
 });
 
@@ -47,9 +50,9 @@ app.post("/todos", async(c) => {
     await db.insert(todosTable).values({
         title: data.get("title"),
         completed: false,
+        priority: data.get("priority") || "normal",
     });
 
-    data.get("title");
     return c.redirect("/");
 });
 
@@ -58,6 +61,7 @@ app.post("/todos/:id/update", async(c) => {
     const id = Number(c.req.param("id"));
     const data = await c.req.formData();
     const newTitle = data.get("title");
+    const newPriority = data.get("priority");
     
     const todo = await getTodoById(id);
     
@@ -65,7 +69,10 @@ app.post("/todos/:id/update", async(c) => {
     
     await db
     .update(todosTable)
-    .set({ title: newTitle })
+    .set({ 
+        title: newTitle,
+        priority: newPriority || todo.priority
+    })
     .where(eq(todosTable.id, id));
     
     return c.redirect(c.req.header("Referer"));

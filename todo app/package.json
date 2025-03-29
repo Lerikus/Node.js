@@ -1,7 +1,7 @@
 {
   "name": "todos",
   "version": "1.0.0",
-  "description": "todo app",
+  "description": "Todo app with priority support",
   "main": "index.js",
   "type": "module",
   "scripts": {

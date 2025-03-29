@@ -4,13 +4,20 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width", initial-scale=1.0>
         <title>Todo app</title>
+        <style>
+            .priority-low { color: yellowgreen; }
+            .priority-normal { color: orange; }
+            .priority-high { color: red; }
+        </style>
     </head>
     <body>
         <h1><%= title.toUpperCase() %></h1>
         <ul>
             <% for (const todo of todos) { %>
                 <li>
-                    <a href="/todo/<%= todo.id %>"><%= todo.title %></a>
+                    <a href="/todo/<%= todo.id %>">
+                        <%= todo.title %> [<span class="priority-<%= todo.priority %>"><%= todo.priority %></span>]
+                    </a>
                     <% if (todo.completed) { %>
                         <a href="/todos/<%= todo.id %>/toggle?return_to=index">[undone]</a>
                     <% } else { %>
@@ -23,6 +30,11 @@
 
         <form action="/todos" method="POST">
             <input type="text" name="title" placeholder="Enter a title">
+            <select name="priority">
+                <option value="low">Low</option>
+                <option value="normal" selected>Normal</option>
+                <option value="high">High</option>
+            </select>
             <button type="submit">Add</button>
         </form>
     </body>
