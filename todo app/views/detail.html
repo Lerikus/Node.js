@@ -26,7 +26,7 @@
                 <% } else { %>
                     <a href="/todos/<%= todo.id %>/toggle?return_to=detail">[done]</a>
                 <% } %>
-                <a href="/todos/<%= todo.id %>/remove">[delete]</a>
+                <a href="/todos/<%= todo.id %>/delete">[delete]</a>
             </div>
             
             <form action="/todos/<%= todo.id %>/update" method="POST">

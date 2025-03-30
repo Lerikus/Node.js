@@ -106,7 +106,12 @@ app.get("/todos/:id/remove", async (c) => {
         .delete(todosTable)
         .where(eq(todosTable.id, id));
     
-    return c.redirect(c.req.header("Referer"));
+    // When coming from detail page, redirect to the homepage
+    const referer = c.req.header("Referer") || "/";
+    if (referer.includes("/todo/")) {
+        return c.redirect("/");
+    }
+    return c.redirect(referer);
 });
 
 // Start the server
