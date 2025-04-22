@@ -9,24 +9,25 @@
             .priority-normal { color: orange; }
             .priority-high { color: red; }
         </style>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const ws = new WebSocket(`ws://${window.location.host}/ws`);
+                
+                ws.addEventListener('message', (event) => {
+                    const data = JSON.parse(event.data);
+                    
+                    if (data.type === 'todos') {
+                        document.getElementById('todos-container').innerHTML = data.html;
+                    }
+                });
+            });
+        </script>
     </head>
     <body>
         <h1><%= title.toUpperCase() %></h1>
-        <ul>
-            <% for (const todo of todos) { %>
-                <li>
-                    <a href="/todo/<%= todo.id %>">
-                        <%= todo.title %> [<span class="priority-<%= todo.priority %>"><%= todo.priority %></span>]
-                    </a>
-                    <% if (todo.completed) { %>
-                        <a href="/todos/<%= todo.id %>/toggle?return_to=index">[undone]</a>
-                    <% } else { %>
-                        <a href="/todos/<%= todo.id %>/toggle?return_to=index">[done]</a>
-                    <% } %>
-                    <a href="/todos/<%= todo.id %>/remove">[delete]</a>
-                </li>
-            <% } %>
-        </ul>
+        <div id="todos-container">
+            <%- include('_todos.html', { todos }) %>
+        </div>
 
         <form action="/todos" method="POST">
             <input type="text" name="title" placeholder="Enter a title">

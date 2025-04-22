@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "ava",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate"
   },
@@ -14,7 +14,9 @@
   "license": "ISC",
   "dependencies": {
     "@hono/node-server": "^1.13.8",
+    "@hono/node-ws": "^1.1.1",
     "@libsql/client": "^0.15.1",
+    "ava": "^6.2.0",
     "drizzle-kit": "^0.30.6",
     "drizzle-orm": "^0.41.0",
     "ejs": "^3.1.10",

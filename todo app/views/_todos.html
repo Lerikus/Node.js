@@ -1,0 +1,15 @@
+<ul id="todos-list">
+  <% for (const todo of todos) { %>
+    <li>
+      <a href="/todo/<%= todo.id %>">
+        <%= todo.title %> [<span class="priority-<%= todo.priority %>"><%= todo.priority %></span>]
+      </a>
+      <% if (todo.completed) { %>
+        <a href="/todos/<%= todo.id %>/toggle?return_to=index">[undone]</a>
+      <% } else { %>
+        <a href="/todos/<%= todo.id %>/toggle?return_to=index">[done]</a>
+      <% } %>
+      <a href="/todos/<%= todo.id %>/remove">[delete]</a>
+    </li>
+  <% } %>
+</ul>

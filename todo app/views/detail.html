@@ -15,8 +15,8 @@
         
         <div>
             <h2>
-                <%= todo.title %>
-                <small>[Priority: <span class="priority-<%= todo.priority %>"><%= todo.priority %></span>]</small>
+                <span class="priority-<%= todo.priority %>"><%= todo.title %></span>
+                <small>[Priority: <%= todo.priority %>]</small>
             </h2>
             <p>Status: <%= todo.completed ? 'Completed' : 'Not completed' %></p>
             
@@ -26,7 +26,7 @@
                 <% } else { %>
                     <a href="/todos/<%= todo.id %>/toggle?return_to=detail">[done]</a>
                 <% } %>
-                <a href="/todos/<%= todo.id %>/delete">[delete]</a>
+                <a href="/todos/<%= todo.id %>/remove">[delete]</a>
             </div>
             
             <form action="/todos/<%= todo.id %>/update" method="POST">

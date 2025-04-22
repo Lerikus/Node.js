@@ -1,0 +1,16 @@
+s<div id="todo-detail-<%= todo.id %>" class="todo-detail">
+  <h2>
+    <%= todo.title %>
+    <small>[Priority: <span class="priority-<%= todo.priority %>"><%= todo.priority %></span>]</small>
+  </h2>
+  <p>Status: <%= todo.completed ? 'Completed' : 'Not completed' %></p>
+  
+  <div>
+    <% if (todo.completed) { %>
+      <a href="/todos/<%= todo.id %>/toggle?return_to=detail">[undone]</a>
+    <% } else { %>
+      <a href="/todos/<%= todo.id %>/toggle?return_to=detail">[done]</a>
+    <% } %>
+    <a href="/todos/<%= todo.id %>/remove">[delete]</a>
+  </div>
+</div>
