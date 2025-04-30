@@ -2,13 +2,18 @@ import { drizzle } from "drizzle-orm/libsql";
 import { todosTable } from "./schema.js";
 import { eq } from "drizzle-orm";
 
-export const db = drizzle({
+let db = drizzle({
   connection:
     process.env.NODE_ENV === "test"
       ? "file::memory:"
       : "file:db.sqlite",
   logger: process.env.NODE_ENV !== "test",
 });
+
+//export the db instance
+export function setDatabase(newDb) {
+  db = newDb;
+}
 
 //function to get a todo by ID
 export const getTodoById = async (id) => {
@@ -26,25 +31,21 @@ export const getAllTodos = async () => {
 
 //function to update a todo
 export const updateTodo = async (id, data) => {
-  await db
+  const result = await db
     .update(todosTable)
     .set(data)
-    .where(eq(todosTable.id, id));
-  
-  
-  return await getTodoById(id);
+    .where(eq(todosTable.id, id))
+    .returning();
+  return result[0] || null;
 };
 
 //function to delete a todo
 export const deleteTodo = async (id) => {
-  const todo = await getTodoById(id);
-  if (!todo) return false;
-  
-  await db
+  const result = await db
     .delete(todosTable)
-    .where(eq(todosTable.id, id));
-    
-  return true;
+    .where(eq(todosTable.id, id))
+    .returning();
+  return result.length > 0;
 };
 
 //function to create a new todo
@@ -53,8 +54,6 @@ export const createTodo = async (data) => {
     title: data.title,
     completed: data.completed !== undefined ? data.completed : false,
     priority: data.priority || "normal",
-  });
-  
-  const todos = await getAllTodos();
-  return todos[todos.length - 1];
+  }).returning();
+  return result[0];
 };
