@@ -76,12 +76,14 @@ app.post("/todos/:id/update", async (c) => {
   
   const updatedTodo = await updateTodo(id, updateData);
   
-  if (!updatedTodo) return c.notFound();
+  if (!updatedTodo) {
+    return c.notFound();
+  }
   
   sendTodosToAllConnections();
   sendTodoDetailToAllConnections(id);
   
-  return c.redirect(c.req.header("Referer"));
+  return c.redirect(`/todo/${id}`);
 });
 
 //route for toggling todos completed status
@@ -97,7 +99,7 @@ app.get("/todos/:id/toggle", async (c) => {
   sendTodosToAllConnections();
   sendTodoDetailToAllConnections(id);
   
-  return c.redirect(c.req.header("Referer"));
+  return c.redirect("/");
 });
 
 //route for removing todo
@@ -111,7 +113,11 @@ app.get("/todos/:id/remove", async (c) => {
   sendTodosToAllConnections();
   sendTodoDeletedToAllConnections(id);
   
-  return c.redirect("/");
+  const referer = c.req.header("Referer") || "/";
+  if (referer.includes("/todo/")) {
+    return c.redirect("/");
+  }
+  return c.redirect(referer);
 });
 
 /** @type{Set<WSContext<WebSocket>>} */

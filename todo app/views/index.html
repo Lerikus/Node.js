@@ -30,13 +30,16 @@
         </div>
 
         <form action="/todos" method="POST">
-            <input type="text" name="title" placeholder="Enter a title">
-            <select name="priority">
+            <label for="todo-title">Todo title</label>
+            <input id="todo-title" type="text" name="title" placeholder="Enter a title">
+
+            <label for="todo-priority">Priority</label>
+            <select id="todo-priority" name="priority">
                 <option value="low">Low</option>
                 <option value="normal" selected>Normal</option>
                 <option value="high">High</option>
             </select>
-            <button type="submit">Add</button>
+            <button type="submit">Add todo</button>
         </form>
     </body>
 </html>

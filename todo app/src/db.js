@@ -1,59 +1,48 @@
 import { drizzle } from "drizzle-orm/libsql";
-import { todosTable } from "./schema.js";
 import { eq } from "drizzle-orm";
+import { migrate } from "drizzle-orm/libsql/migrator";
+import { todosTable } from "./schema.js";
 
-let db = drizzle({
-  connection:
-    process.env.NODE_ENV === "test"
-      ? "file::memory:"
-      : "file:db.sqlite",
-  logger: process.env.NODE_ENV !== "test",
+const isTest = process.env.NODE_ENV === "test";
+
+export const db = drizzle({
+  connection: isTest ? "file::memory:" : "file:db.sqlite",
+  logger: !isTest,
 });
 
-//export the db instance
-export function setDatabase(newDb) {
-  db = newDb;
-}
+await migrate(db, { migrationsFolder: "drizzle" });
 
-//function to get a todo by ID
+export const getAllTodos = async () => {
+  const todos = await db.select().from(todosTable).all();
+  return todos;
+};
+
 export const getTodoById = async (id) => {
-  return await db
+  const todo = await db
     .select()
     .from(todosTable)
     .where(eq(todosTable.id, id))
     .get();
+  return todo;
 };
 
-//function to get all todos
-export const getAllTodos = async () => {
-  return await db.select().from(todosTable).all();
+export const createTodo = async (values) => {
+  return await db
+    .insert(todosTable)
+    .values(values)
+    .returning(todosTable)
+    .get();
 };
 
-//function to update a todo
-export const updateTodo = async (id, data) => {
-  const result = await db
+export const updateTodo = async (id, values) => {
+  await db
     .update(todosTable)
-    .set(data)
-    .where(eq(todosTable.id, id))
-    .returning();
-  return result[0] || null;
+    .set(values)
+    .where(eq(todosTable.id, id));
+  return getTodoById(id);
 };
 
-//function to delete a todo
 export const deleteTodo = async (id) => {
-  const result = await db
-    .delete(todosTable)
-    .where(eq(todosTable.id, id))
-    .returning();
-  return result.length > 0;
-};
-
-//function to create a new todo
-export const createTodo = async (data) => {
-  const result = await db.insert(todosTable).values({
-    title: data.title,
-    completed: data.completed !== undefined ? data.completed : false,
-    priority: data.priority || "normal",
-  }).returning();
-  return result[0];
+  const result = await db.delete(todosTable).where(eq(todosTable.id, id));
+  return true;
 };
