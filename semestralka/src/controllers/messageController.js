@@ -1,6 +1,7 @@
 import { db } from '../db/index.js';
 import { messages, users } from '../db/schema.js';
 import { eq, desc } from 'drizzle-orm';
+import { broadcastMessageToChannel } from '../index.js';
 
 export const messageController = {
   // Create a new message
@@ -31,7 +32,8 @@ export const messageController = {
           username: user.username
         }
       };
-      
+      // Broadcast to WebSocket clients
+      broadcastMessageToChannel(channelId, messageWithUser);
       return c.json(messageWithUser, 201);
     } catch (error) {
       console.error('Error creating message:', error);

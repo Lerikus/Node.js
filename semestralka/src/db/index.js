@@ -8,6 +8,14 @@ import path from 'path';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const migrationsFolder = path.join(__dirname, '../../drizzle');
 
+// Export for test usage
+export const createTestDb = async () => {
+  const sqlite = new Database(':memory:');
+  const db = drizzle(sqlite, { schema });
+  await migrate(db, { migrationsFolder });
+  return db;
+};
+
 // Initialize the SQLite database
 const sqlite = new Database('slack_clone.db');
 export const db = drizzle(sqlite, { schema });

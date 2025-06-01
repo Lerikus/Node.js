@@ -9,6 +9,7 @@ import { requireAuth, populateUser, guestOnly } from './middleware/authMiddlewar
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { WebSocketServer } from 'ws';
 
 const app = new Hono();
 
@@ -82,9 +83,42 @@ app.notFound((c) => {
 
 // Start the server
 const PORT = process.env.PORT || 3000;
-serve({
+const server = serve({
   port: PORT,
   fetch: app.fetch
 }, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
+
+// --- WebSocket setup ---
+const wss = new WebSocketServer({ server });
+
+// Map of channelId to Set of WebSocket connections
+const channelClients = new Map();
+
+wss.on('connection', (ws, req) => {
+  // Parse channelId from query string
+  const url = new URL(req.url, `http://${req.headers.host}`);
+  const channelId = url.searchParams.get('channelId');
+  if (!channelId) {
+    ws.close();
+    return;
+  }
+  if (!channelClients.has(channelId)) channelClients.set(channelId, new Set());
+  channelClients.get(channelId).add(ws);
+
+  ws.on('close', () => {
+    channelClients.get(channelId)?.delete(ws);
+  });
+});
+
+// Helper to broadcast to all clients in a channel
+export function broadcastMessageToChannel(channelId, message) {
+  const clients = channelClients.get(String(channelId));
+  if (clients) {
+    const data = JSON.stringify({ type: 'new_message', message });
+    for (const ws of clients) {
+      if (ws.readyState === ws.OPEN) ws.send(data);
+    }
+  }
+}

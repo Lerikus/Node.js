@@ -18,8 +18,42 @@ document.addEventListener('DOMContentLoaded', function() {
   // Load initial messages
   loadMessages();
   
-  // Set up polling for new messages every 3 seconds
-  const pollInterval = setInterval(loadMessages, 3000);
+  // --- WebSocket setup ---
+  let ws;
+  let reconnectTimeout;
+
+  function connectWebSocket() {
+    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    ws = new WebSocket(`${protocol}://${window.location.host}/ws?channelId=${channelId}`);
+
+    ws.addEventListener('open', () => {
+      // Optionally: console.log('WebSocket connected');
+    });
+
+    ws.addEventListener('message', (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'new_message') {
+        // Add the new message to the UI
+        if (messagesNeedUpdate([...previousMessages, data.message])) {
+          // Only append if it's a new message
+          appendMessageToUI(data.message);
+          previousMessages.push(data.message);
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+      }
+    });
+
+    ws.addEventListener('close', () => {
+      // Try to reconnect after a short delay
+      reconnectTimeout = setTimeout(connectWebSocket, 2000);
+    });
+
+    ws.addEventListener('error', () => {
+      ws.close();
+    });
+  }
+
+  connectWebSocket();
   
   // Handle form submission
   messageForm.addEventListener('submit', async (e) => {
@@ -271,6 +305,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Clean up when leaving the page
   window.addEventListener('beforeunload', () => {
-    clearInterval(pollInterval);
+    if (ws) ws.close();
+    if (reconnectTimeout) clearTimeout(reconnectTimeout);
   });
 });

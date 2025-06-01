@@ -1,5 +1,5 @@
 {
-  "name": "slack-clone-mvp",
+  "name": "clask",
   "version": "1.0.0",
   "type": "module",
   "description": "Slack clone MVP with Hono and Drizzle",
@@ -9,7 +9,7 @@
     "start": "node src/index.js",
     "seed": "node src/utils/seed.js",
     "migrate": "node src/utils/migration.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "ava"
   },
   "dependencies": {
     "@hono/node-server": "0.3.0",
@@ -20,6 +20,7 @@
     "hono": "3.11.12"
   },
   "devDependencies": {
+    "ava": "^4.3.3",
     "drizzle-kit": "^0.20.14",
     "nodemon": "^3.0.1"
   }
