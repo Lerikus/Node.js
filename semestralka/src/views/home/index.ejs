@@ -1,0 +1,15 @@
+<div class="home-container">
+  <div class="hero">
+    <svg width="64" height="64" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto 18px auto;"><circle cx="24" cy="24" r="24" fill="#FF9800"/><ellipse cx="24" cy="24" rx="14" ry="14" fill="#FFA726"/><ellipse cx="24" cy="24" rx="10" ry="10" fill="#FFF3E0"/><ellipse cx="24" cy="24" rx="7" ry="7" fill="#FF9800"/><path d="M24 10 Q26 18 34 18" stroke="#388E3C" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+    <h1 style="color:#FF9800; font-weight:700;">Welcome to Clask</h1>
+    <p style="color:#616061;">A simple messaging platform for team communication</p>
+    <div class="cta-buttons">
+      <% if (locals.user) { %>
+        <a href="/channels" class="btn btn-primary" style="background:#FF9800; color:#fff;">Go to Channels</a>
+      <% } else { %>
+        <a href="/login" class="btn btn-primary" style="background:#FF9800; color:#fff;">Login</a>
+        <a href="/register" class="btn btn-secondary" style="color:#FF9800; border:1px solid #FF9800;">Register</a>
+      <% } %>
+    </div>
+  </div>
+</div>

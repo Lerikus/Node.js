@@ -1,0 +1,91 @@
+<div class="container">
+  <div class="form-wrapper">
+    <div class="form-card">
+      <div class="form-logo">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="24" fill="#FF9800"/><ellipse cx="24" cy="24" rx="14" ry="14" fill="#FFA726"/><ellipse cx="24" cy="24" rx="10" ry="10" fill="#FFF3E0"/><ellipse cx="24" cy="24" rx="7" ry="7" fill="#FF9800"/><path d="M24 10 Q26 18 34 18" stroke="#388E3C" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+        <h2 class="form-title">Create your Clask account</h2>
+        <p class="form-subtitle">Sign up to start chatting with your team.</p>
+      </div>
+      <% if (locals.error) { %>
+        <div class="form-error"><%= error %></div>
+      <% } %>
+      <form action="/register" method="post" autocomplete="off">
+        <div class="form-group">
+          <label for="username" class="form-label">Username</label>
+          <input type="text" id="username" name="username" required class="form-input">
+        </div>
+        <div class="form-group">
+          <label for="password" class="form-label">Password</label>
+          <div class="form-password-wrapper">
+            <input type="password" id="password" name="password" required class="form-input">
+            <button type="button" class="toggle-password" data-target="password"><span class="show-icon">👁️</span></button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="confirmPassword" class="form-label">Confirm Password</label>
+          <div class="form-password-wrapper">
+            <input type="password" id="confirmPassword" name="confirmPassword" required class="form-input">
+            <button type="button" class="toggle-password" data-target="confirmPassword"><span class="show-icon">👁️</span></button>
+          </div>
+          <div id="passwordStatus" class="form-password-status"></div>
+        </div>
+        <button type="submit" id="submitButton" class="form-submit">Register</button>
+      </form>
+      <p class="form-footer">Already have an account? <a href="/login" class="form-link">Login</a></p>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Password toggle functionality
+    const toggleButtons = document.querySelectorAll('.toggle-password');
+    toggleButtons.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const targetId = this.getAttribute('data-target');
+        const passwordInput = document.getElementById(targetId);
+        if (passwordInput.type === 'password') {
+          passwordInput.type = 'text';
+          this.innerHTML = '<span class="hide-icon">❌</span>';
+        } else {
+          passwordInput.type = 'password';
+          this.innerHTML = '<span class="show-icon">👁️</span>';
+        }
+      });
+    });
+    // Password match checker - always visible
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirmPassword');
+    const passwordStatus = document.getElementById('passwordStatus');
+    const submitButton = document.getElementById('submitButton');
+    function checkPasswordMatch() {
+      if (password.value === '' && confirmPassword.value === '') {
+        passwordStatus.textContent = 'Please enter a password';
+        passwordStatus.style.backgroundColor = '#f8f8f8';
+        passwordStatus.style.color = '#666';
+        return false;
+      } else if (password.value === confirmPassword.value) {
+        passwordStatus.textContent = 'Passwords match! ✅';
+        passwordStatus.style.backgroundColor = '#e3f9e5';
+        passwordStatus.style.color = '#287d3c';
+        return true;
+      } else {
+        passwordStatus.textContent = 'Passwords do not match! ❌';
+        passwordStatus.style.backgroundColor = '#feefef';
+        passwordStatus.style.color = '#da1414';
+        return false;
+      }
+    }
+    password.addEventListener('input', checkPasswordMatch);
+    confirmPassword.addEventListener('input', checkPasswordMatch);
+    checkPasswordMatch();
+    document.querySelector('form').addEventListener('submit', function(e) {
+      if (!checkPasswordMatch() && password.value && confirmPassword.value) {
+        e.preventDefault();
+        alert('Passwords must match to submit the form');
+      }
+    });
+    // Autofocus username
+    const usernameInput = document.getElementById('username');
+    if (usernameInput) usernameInput.focus();
+  });
+</script>

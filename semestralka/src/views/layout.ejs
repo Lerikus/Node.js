@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= locals.title ? title : 'Clask' %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css" type="text/css">
+</head>
+<body style="background: #f8f8fb; margin: 0;">
+  <header class="main-header">
+    <div class="header-inner">
+      <div class="header-logo">
+        <svg width="32" height="32" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle;"><circle cx="24" cy="24" r="24" fill="#FF9800"/><ellipse cx="24" cy="24" rx="14" ry="14" fill="#FFA726"/><ellipse cx="24" cy="24" rx="10" ry="10" fill="#FFF3E0"/><ellipse cx="24" cy="24" rx="7" ry="7" fill="#FF9800"/><path d="M24 10 Q26 18 34 18" stroke="#388E3C" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+        <span class="header-title">Clask</span>
+      </div>
+      <nav class="main-nav">
+        <% if (locals.user) { %>
+          <span class="user-info">
+            <span class="username"><%= user.username %></span>
+            <a href="/logout" class="header-link">Logout</a>
+          </span>
+        <% } else { %>
+          <a href="/login" class="header-link">Login</a>
+          <a href="/register" class="header-link">Register</a>
+        <% } %>
+      </nav>
+    </div>
+  </header>
+  <main style="padding-top: 80px;">
+    <div class="main-content">
+      <%- content %>
+    </div>
+  </main>
+</body>
+</html>

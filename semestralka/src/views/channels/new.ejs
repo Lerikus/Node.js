@@ -1,0 +1,24 @@
+<div class="form-wrapper">
+  <div class="form-card">
+    <div class="form-logo">
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="24" fill="#FF9800"/><ellipse cx="24" cy="24" rx="14" ry="14" fill="#FFA726"/><ellipse cx="24" cy="24" rx="10" ry="10" fill="#FFF3E0"/><ellipse cx="24" cy="24" rx="7" ry="7" fill="#FF9800"/><path d="M24 10 Q26 18 34 18" stroke="#388E3C" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+      <h2 class="form-title">Create a New Channel</h2>
+      <p class="form-subtitle">Start a new conversation space for your team.</p>
+    </div>
+    <% if (locals.error) { %>
+      <div class="form-error"><%= error %></div>
+    <% } %>
+    <form action="/channels" method="post" autocomplete="off">
+      <div class="form-group">
+        <label for="name" class="form-label">Channel Name</label>
+        <input type="text" id="name" name="name" required class="form-input">
+      </div>
+      <div class="form-group">
+        <label for="description" class="form-label">Description <span class="form-label-optional">(optional)</span></label>
+        <textarea id="description" name="description" rows="3" class="form-input"></textarea>
+      </div>
+      <button type="submit" class="form-submit">Create Channel</button>
+    </form>
+    <a href="/channels" class="form-link">Back to Channels</a>
+  </div>
+</div>

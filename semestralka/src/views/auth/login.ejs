@@ -1,0 +1,51 @@
+<div class="form-wrapper">
+  <div class="form-card">
+    <div class="form-logo">
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="24" fill="#FF9800"/><ellipse cx="24" cy="24" rx="14" ry="14" fill="#FFA726"/><ellipse cx="24" cy="24" rx="10" ry="10" fill="#FFF3E0"/><ellipse cx="24" cy="24" rx="7" ry="7" fill="#FF9800"/><path d="M24 10 Q26 18 34 18" stroke="#388E3C" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+      <h2 class="form-title">Sign in to Clask</h2>
+      <p class="form-subtitle">Enter your credentials to access your workspace.</p>
+    </div>
+    <% if (locals.error) { %>
+      <div class="form-error"><%= error %></div>
+    <% } %>
+    <form action="/login" method="post" autocomplete="off">
+      <div class="form-group">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" id="username" name="username" required class="form-input">
+      </div>
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <div class="form-password-wrapper">
+          <input type="password" id="password" name="password" required class="form-input">
+          <button type="button" class="toggle-password" data-target="password"><span class="show-icon">👁️</span></button>
+        </div>
+      </div>
+      <button type="submit" class="form-submit">Login</button>
+    </form>
+    <p class="form-footer">Don't have an account? <a href="/register" class="form-link">Register</a></p>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const toggleBtn = document.querySelector('.toggle-password');
+    const passwordInput = document.getElementById('password');
+    if (toggleBtn && passwordInput) {
+      toggleBtn.addEventListener('click', function() {
+        if (passwordInput.type === 'password') {
+          passwordInput.type = 'text';
+          toggleBtn.innerHTML = '<span class="hide-icon">❌</span>';
+        } else {
+          passwordInput.type = 'password';
+          toggleBtn.innerHTML = '<span class="show-icon">👁️</span>';
+        }
+      });
+    }
+    const usernameInput = document.getElementById('username');
+    if (usernameInput) usernameInput.focus();
+    passwordInput && passwordInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.target.form && e.target.form.submit();
+      }
+    });
+  });
+</script>
