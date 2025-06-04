@@ -86,8 +86,6 @@ const PORT = process.env.PORT || 3000;
 const server = serve({
   port: PORT,
   fetch: app.fetch
-}, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
 });
 
 // --- WebSocket setup ---

@@ -17,11 +17,11 @@ export const homeController = {
           return c.redirect('/channels/new');
         }
       } catch (error) {
-        console.error('Error finding first channel:', error);
+        // Removed all console.error calls for production cleanliness.
       }
     }
     
     // Show home page for guests
-    return c.render('home', { title: 'Slack Clone - Home' });
+    return c.render('home', { title: 'Clask- Home' });
   }
 };

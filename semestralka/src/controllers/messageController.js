@@ -36,7 +36,6 @@ export const messageController = {
       broadcastMessageToChannel(channelId, messageWithUser);
       return c.json(messageWithUser, 201);
     } catch (error) {
-      console.error('Error creating message:', error);
       return c.json({ error: 'Failed to create message' }, 500);
     }
   },
@@ -76,7 +75,6 @@ export const messageController = {
       
       return c.json(formattedMessages);
     } catch (error) {
-      console.error('Error fetching messages:', error);
       return c.json({ error: 'Failed to fetch messages' }, 500);
     }
   }

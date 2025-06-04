@@ -9,7 +9,13 @@
     "start": "node src/index.js",
     "seed": "node src/utils/seed.js",
     "migrate": "node src/utils/migration.js",
-    "test": "ava"
+    "test": "ava",
+    "test:seed": "NODE_ENV=test node ./src/utils/seed.js",
+    "test:e2e": "npm run test:seed && playwright test --config=playwright.config.cjs",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report",
+    "test:e2e:codegen": "playwright codegen http://localhost:3000"
   },
   "dependencies": {
     "@hono/node-server": "0.3.0",
@@ -20,6 +26,7 @@
     "hono": "3.11.12"
   },
   "devDependencies": {
+    "@playwright/test": "^1.52.0",
     "ava": "^4.3.3",
     "drizzle-kit": "^0.20.14",
     "nodemon": "^3.0.1"

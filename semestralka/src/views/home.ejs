@@ -1,14 +1,39 @@
 <div class="home-container">
   <div class="hero">
-    <svg viewBox="0 0 54 54" width="80" height="80" style="margin-bottom: 24px;">
-      <path fill="#36C5F0" d="M19.712.133a5.381 5.381 0 0 0-5.376 5.387 5.381 5.381 0 0 0 5.376 5.386h5.376V5.52A5.381 5.381 0 0 0 19.712.133m0 14.365H5.376A5.381 5.381 0 0 0 0 19.884a5.381 5.381 0 0 0 5.376 5.387h14.336a5.381 5.381 0 0 0 5.376-5.387 5.381 5.381 0 0 0-5.376-5.386"></path>
-      <path fill="#2EB67D" d="M53.76 19.884a5.381 5.381 0 0 0-5.376-5.386 5.381 5.381 0 0 0-5.376 5.386v5.387h5.376a5.381 5.381 0 0 0 5.376-5.387m-14.336 0V5.52A5.381 5.381 0 0 0 34.048.133a5.381 5.381 0 0 0-5.376 5.387v14.364a5.381 5.381 0 0 0 5.376 5.387 5.381 5.381 0 0 0 5.376-5.387"></path>
-      <path fill="#ECB22E" d="M34.048 54a5.381 5.381 0 0 0 5.376-5.387 5.381 5.381 0 0 0-5.376-5.386h-5.376v5.386A5.381 5.381 0 0 0 34.048 54m0-14.365h14.336a5.381 5.381 0 0 0 5.376-5.386 5.381 5.381 0 0 0-5.376-5.387H34.048a5.381 5.381 0 0 0-5.376 5.387 5.381 5.381 0 0 0 5.376 5.386"></path>
-      <path fill="#E01E5A" d="M.133 34.249a5.381 5.381 0 0 0 5.376 5.386 5.381 5.381 0 0 0 5.376-5.386v-5.387H5.509a5.381 5.381 0 0 0-5.376 5.387m14.336 0v14.364A5.381 5.381 0 0 0 19.845 54a5.381 5.381 0 0 0 5.376-5.387V34.25a5.381 5.381 0 0 0-5.376-5.387 5.381 5.381 0 0 0-5.376 5.387"></path>
+    <!-- Clask logo (same as header) -->
+    <svg width="80" height="80" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 24px;">
+      <circle cx="24" cy="24" r="24" fill="#FF9800"/>
+      <ellipse cx="24" cy="24" rx="14" ry="14" fill="#FFA726"/>
+      <ellipse cx="24" cy="24" rx="10" ry="10" fill="#FFF3E0"/>
+      <ellipse cx="24" cy="24" rx="7" ry="7" fill="#FF9800"/>
+      <path d="M24 10 Q26 18 34 18" stroke="#388E3C" stroke-width="3" fill="none" stroke-linecap="round"/>
     </svg>
-    <h1>Welcome to Slack Clone</h1>
-    <p>A simple messaging platform for team communication</p>
-    
+    <h1 style="color:#FF9800; font-weight:700;">Welcome to Clask</h1>
+    <p>A modern, open-source team chat inspired by Slack.<br>Fast, simple, and built for collaboration.</p>
+    <style>
+      .btn.btn-primary {
+        background: #FF9800;
+        color: #fff;
+        border: none;
+        box-shadow: 0 2px 8px rgba(255,152,0,0.08);
+        transition: background 0.2s;
+      }
+      .btn.btn-primary:hover {
+        background: #fb8c00;
+        color: #fff;
+      }
+      .btn.btn-secondary {
+        background: #fff;
+        color: #FF9800;
+        border: 2px solid #FF9800;
+        transition: background 0.2s, color 0.2s, border-color 0.2s;
+      }
+      .btn.btn-secondary:hover {
+        background: #FFF3E0;
+        color: #fb8c00;
+        border-color: #fb8c00;
+      }
+    </style>
     <div class="cta-buttons">
       <a href="/login" class="btn btn-primary">Login</a>
       <a href="/register" class="btn btn-secondary">Register</a>

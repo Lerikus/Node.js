@@ -16,7 +16,6 @@ export const channelController = {
         return c.redirect('/channels/new');
       }
     } catch (error) {
-      console.error('Error finding first channel:', error);
       return c.render('error', {
         message: 'Failed to load channels',
         error
@@ -133,20 +132,19 @@ export const channelController = {
       return c.render('channels/new', { error: 'Channel name already exists' });
     }
     
-    // Create the channel
-    const [newChannel] = await db.insert(channels).values({
+    // Insert new channel
+    await db.insert(channels).values({
       name,
       description,
       createdBy: user.id
-    }).returning();
-    
-    // Add creator as channel member with admin role
-    await db.insert(channelMembers).values({
-      channelId: newChannel.id,
-      userId: user.id,
-      role: 'admin'
     });
-    
+    // Get the last inserted channel for this user (by max id)
+    const [newChannel] = await db.select()
+      .from(channels)
+      .where(eq(channels.createdBy, user.id))
+      .orderBy(desc(channels.id))
+      .limit(1);
+    // Redirect to the new channel's page
     return c.redirect(`/channels/${newChannel.id}`);
   },
 
@@ -177,13 +175,14 @@ export const channelController = {
       .limit(1);
     
     if (!membership || membership.role !== 'admin') {
+      // Render the channel page with an error if the user is not an admin
       return c.render('channels/show', { 
         error: 'You do not have permission to edit this channel',
-        // Reload the channel data
-        redirect: `/channels/${channelId}`
+        channel,
+        user,
+        isChannelList: false
       });
     }
-    
     return c.render('channels/edit', { channel });
   },
   
@@ -192,8 +191,6 @@ export const channelController = {
     const channelId = parseInt(c.req.param('id'));
     const { name, description } = await c.req.parseBody();
     const user = c.get('user');
-    
-    console.log(`Updating channel ${channelId}: name=${name}, description=${description}`);
     
     // Validate input
     if (!name) {
@@ -210,7 +207,6 @@ export const channelController = {
       .limit(1);
     
     if (!channel) {
-      console.log(`Channel ${channelId} not found`);
       return c.redirect('/channels');
     }
     
@@ -226,7 +222,6 @@ export const channelController = {
       .limit(1);
     
     if (!membership || membership.role !== 'admin') {
-      console.log(`User ${user.id} is not admin of channel ${channelId}`);
       return c.redirect(`/channels/${channelId}`);
     }
     
@@ -243,7 +238,6 @@ export const channelController = {
         .limit(1);
       
       if (existingChannels.length > 0) {
-        console.log(`Channel name ${name} already exists`);
         return c.render('channels/edit', { 
           error: 'Channel name already exists',
           channel: { id: channelId, name, description }
@@ -252,7 +246,6 @@ export const channelController = {
     }
     
     // Update the channel
-    console.log(`Updating channel ${channelId} in database`);
     await db.update(channels)
       .set({
         name,
@@ -260,7 +253,6 @@ export const channelController = {
       })
       .where(eq(channels.id, channelId));
     
-    console.log(`Channel ${channelId} updated successfully`);
     return c.redirect(`/channels/${channelId}`);
   },
   
@@ -269,8 +261,6 @@ export const channelController = {
     const channelId = parseInt(c.req.param('id'));
     const user = c.get('user');
     
-    console.log(`Request to delete channel ${channelId} by user ${user.id}`);
-    
     // Check if channel exists
     const [channel] = await db.select()
       .from(channels)
@@ -278,7 +268,6 @@ export const channelController = {
       .limit(1);
     
     if (!channel) {
-      console.log(`Channel ${channelId} not found`);
       return c.redirect('/channels');
     }
     
@@ -294,33 +283,27 @@ export const channelController = {
       .limit(1);
     
     if (!membership || membership.role !== 'admin') {
-      console.log(`User ${user.id} is not admin of channel ${channelId}, cannot delete`);
       return c.redirect(`/channels/${channelId}`);
     }
     
     try {
       // Start a transaction
       await db.transaction(async (tx) => {
-        console.log(`Deleting messages for channel ${channelId}`);
         // Delete channel messages
         await tx.delete(messages)
           .where(eq(messages.channelId, channelId));
         
-        console.log(`Deleting memberships for channel ${channelId}`);
         // Delete channel memberships
         await tx.delete(channelMembers)
           .where(eq(channelMembers.channelId, channelId));
         
-        console.log(`Deleting channel ${channelId} itself`);
         // Delete the channel
         await tx.delete(channels)
           .where(eq(channels.id, channelId));
       });
       
-      console.log(`Channel ${channelId} deleted successfully`);
       return c.redirect('/channels');
     } catch (err) {
-      console.error('Error deleting channel:', err);
       return c.redirect(`/channels/${channelId}`);
     }
   }

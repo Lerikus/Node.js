@@ -21,7 +21,7 @@ export const populateUser = async (c, next) => {
       }
     }
   } catch (error) {
-    console.error('Error populating user:', error);
+    // Removed all console.error calls for production cleanliness.
   }
   
   await next();
@@ -51,7 +51,6 @@ export const guestOnly = async (c, next) => {
         return c.redirect('/channels/new');
       }
     } catch (error) {
-      console.error('Error finding first channel:', error);
       return c.redirect('/');
     }
   }

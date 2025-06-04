@@ -16,15 +16,15 @@ export const createTestDb = async () => {
   return db;
 };
 
-// Initialize the SQLite database
-const sqlite = new Database('slack_clone.db');
-export const db = drizzle(sqlite, { schema });
+const DB_PATH = process.env.NODE_ENV === 'test'
+  ? path.join(__dirname, '../../test.db')
+  : path.join(__dirname, '../../slack_clone.db');
+
+export const db = drizzle(new Database(DB_PATH), { schema });
 
 // Run migrations
 try {
-  console.log('Running database migrations...');
   migrate(db, { migrationsFolder });
-  console.log('Migrations completed successfully');
 } catch (error) {
-  console.error('Error running migrations:', error);
+  // Handle migration error if necessary
 }

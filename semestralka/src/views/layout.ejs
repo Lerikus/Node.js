@@ -34,5 +34,16 @@
       <%- content %>
     </div>
   </main>
+  <!-- Playwright E2E login helper for tests (not for production) -->
+  <script>
+    window.e2eLogin = async function(page, username = "admin", password = "admin123") {
+      await page.goto("/login");
+      await page.getByLabel(/username/i).fill(username);
+      await page.getByLabel(/password/i).fill(password);
+      await page.getByRole("button", { name: /login/i }).click();
+      // Optionally: check for successful login
+      await page.getByText(username);
+    };
+  </script>
 </body>
 </html>

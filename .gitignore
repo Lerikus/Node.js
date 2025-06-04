@@ -4,3 +4,6 @@ db.sqlite
 /.idea
 /.venv
 /ukol_0.js
+# Ignore Playwright and other test results
+semestralka/test-results/
+todo app/playwright-report/

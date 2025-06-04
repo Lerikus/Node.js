@@ -46,7 +46,6 @@ export const renderer = async (c, next) => {
       
       return c.html(html);
     } catch (err) {
-      console.error(`Error rendering template ${template}:`, err);
       return c.html(`
         <h1>Error rendering template</h1>
         <pre>${err.message}</pre>
