@@ -58,14 +58,15 @@ document.addEventListener('DOMContentLoaded', function() {
   // Handle form submission
   messageForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const content = messageInput.value.trim();
+    // Get HTML content and plain text fallback
+    const content = messageInput.innerHTML.trim();
+    const plainText = messageInput.innerText.trim();
     const imageInput = document.getElementById('image-input');
     const file = imageInput && imageInput.files && imageInput.files[0];
-    if (!content && !file) return;
+    if (!plainText && !file) return;
     try {
       let response;
       if (file) {
-        // Send as multipart/form-data
         const formData = new FormData();
         formData.append('content', content);
         formData.append('channelId', channelId);
@@ -75,7 +76,6 @@ document.addEventListener('DOMContentLoaded', function() {
           body: formData
         });
       } else {
-        // Send as JSON
         response = await fetch('/api/messages', {
           method: 'POST',
           headers: {
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!response.ok) {
         throw new Error('Failed to send message');
       }
-      messageInput.value = '';
+      messageInput.innerHTML = '';
       if (imageInput) imageInput.value = '';
       loadMessages();
     } catch (error) {
@@ -244,8 +244,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Italic: *text* or _text_ (not inside bold)
     content = content.replace(/(?<!\*)\*(?!\*)([^*]+)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
     content = content.replace(/(?<!_)_(?!_)([^_]+)(?<!_)_(?!_)/g, '<em>$1</em>');
-    // Inline code: `code`
-    content = content.replace(/`([^`]+)`/g, '<code>$1</code>');
     // Strikethrough: ~~text~~
     content = content.replace(/~~(.*?)~~/g, '<s>$1</s>');
 
@@ -286,46 +284,33 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 3000);
   }
   
-  // --- Formatting toolbar logic ---
-  function wrapSelection(startTag, endTag) {
-    const input = messageInput;
-    const value = input.value;
-    const start = input.selectionStart;
-    const end = input.selectionEnd;
-    if (start === end) {
-      // No selection: insert tags and place cursor in between
-      input.value = value.slice(0, start) + startTag + endTag + value.slice(end);
-      input.selectionStart = input.selectionEnd = start + startTag.length;
-    } else {
-      // Wrap selected text
-      input.value = value.slice(0, start) + startTag + value.slice(start, end) + endTag + value.slice(end);
-      input.selectionStart = start;
-      input.selectionEnd = end + startTag.length + endTag.length;
-    }
-    input.focus();
+  // --- Formatting toolbar logic for contenteditable ---
+  function wrapSelectionHtml(tag) {
+    document.execCommand(tag, false, null);
+    messageInput.focus();
   }
 
   // Attach event listeners to formatting buttons if present
   const boldBtn = document.getElementById('format-bold');
   const italicBtn = document.getElementById('format-italic');
-  const codeBtn = document.getElementById('format-code');
   const strikeBtn = document.getElementById('format-strike');
+  const underlineBtn = document.getElementById('format-underline');
 
   if (boldBtn) boldBtn.addEventListener('click', function(e) {
     e.preventDefault();
-    wrapSelection('**', '**');
+    wrapSelectionHtml('bold');
   });
   if (italicBtn) italicBtn.addEventListener('click', function(e) {
     e.preventDefault();
-    wrapSelection('*', '*');
-  });
-  if (codeBtn) codeBtn.addEventListener('click', function(e) {
-    e.preventDefault();
-    wrapSelection('`', '`');
+    wrapSelectionHtml('italic');
   });
   if (strikeBtn) strikeBtn.addEventListener('click', function(e) {
     e.preventDefault();
-    wrapSelection('~~', '~~');
+    wrapSelectionHtml('strikeThrough');
+  });
+  if (underlineBtn) underlineBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    wrapSelectionHtml('underline');
   });
   
   // Add CSS for date divider and toast
