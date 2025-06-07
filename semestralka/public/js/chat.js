@@ -58,32 +58,41 @@ document.addEventListener('DOMContentLoaded', function() {
   // Handle form submission
   messageForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
     const content = messageInput.value.trim();
-    if (!content) return;
-    
+    const imageInput = document.getElementById('image-input');
+    const file = imageInput && imageInput.files && imageInput.files[0];
+    if (!content && !file) return;
     try {
-      const response = await fetch('/api/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          content,
-          channelId
-        })
-      });
-      
+      let response;
+      if (file) {
+        // Send as multipart/form-data
+        const formData = new FormData();
+        formData.append('content', content);
+        formData.append('channelId', channelId);
+        formData.append('image', file);
+        response = await fetch('/api/messages', {
+          method: 'POST',
+          body: formData
+        });
+      } else {
+        // Send as JSON
+        response = await fetch('/api/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            content,
+            channelId
+          })
+        });
+      }
       if (!response.ok) {
         throw new Error('Failed to send message');
       }
-      
-      // Clear input field
       messageInput.value = '';
-      
-      // Load the latest messages to show the new one
+      if (imageInput) imageInput.value = '';
       loadMessages();
-      
     } catch (error) {
       console.error('Error sending message:', error);
       showErrorToast('Failed to send message. Please try again.');
@@ -209,26 +218,43 @@ document.addEventListener('DOMContentLoaded', function() {
       minute: '2-digit'
     });
     
+    let imageHtml = '';
+    if (message.imageUrl) {
+      imageHtml = `<div class="message-image"><img src="${message.imageUrl}" alt="uploaded image" style="max-width:220px;max-height:180px;border-radius:6px;margin-top:6px;"></div>`;
+    }
+    
     messageElement.innerHTML = `
       <div class="message-header">
         <span class="message-username">${escapeHtml(message.user.username)}</span>
         <span class="message-time">${time}</span>
       </div>
       <div class="message-content">${formatMessageContent(message.content)}</div>
+      ${imageHtml}
     `;
     
     messagesContainer.appendChild(messageElement);
   }
   
-  // Format message content (convert URLs to links, etc)
+  // Format message content (convert URLs to links, Markdown-like formatting, etc)
   function formatMessageContent(content) {
+    // DO NOT escape HTML here, since we want to allow formatting tags
+    // Bold: **text** or __text__
+    content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    content = content.replace(/__(.*?)__/g, '<strong>$1</strong>');
+    // Italic: *text* or _text_ (not inside bold)
+    content = content.replace(/(?<!\*)\*(?!\*)([^*]+)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
+    content = content.replace(/(?<!_)_(?!_)([^_]+)(?<!_)_(?!_)/g, '<em>$1</em>');
+    // Inline code: `code`
+    content = content.replace(/`([^`]+)`/g, '<code>$1</code>');
+    // Strikethrough: ~~text~~
+    content = content.replace(/~~(.*?)~~/g, '<s>$1</s>');
+
     // Replace URLs with clickable links
     const urlRegex = /(https?:\/\/[^\s]+)/g;
-    content = escapeHtml(content).replace(
+    content = content.replace(
       urlRegex, 
       url => `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`
     );
-    
     // Replace newlines with <br>
     return content.replace(/\n/g, '<br>');
   }
@@ -259,6 +285,48 @@ document.addEventListener('DOMContentLoaded', function() {
       }, 300);
     }, 3000);
   }
+  
+  // --- Formatting toolbar logic ---
+  function wrapSelection(startTag, endTag) {
+    const input = messageInput;
+    const value = input.value;
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+    if (start === end) {
+      // No selection: insert tags and place cursor in between
+      input.value = value.slice(0, start) + startTag + endTag + value.slice(end);
+      input.selectionStart = input.selectionEnd = start + startTag.length;
+    } else {
+      // Wrap selected text
+      input.value = value.slice(0, start) + startTag + value.slice(start, end) + endTag + value.slice(end);
+      input.selectionStart = start;
+      input.selectionEnd = end + startTag.length + endTag.length;
+    }
+    input.focus();
+  }
+
+  // Attach event listeners to formatting buttons if present
+  const boldBtn = document.getElementById('format-bold');
+  const italicBtn = document.getElementById('format-italic');
+  const codeBtn = document.getElementById('format-code');
+  const strikeBtn = document.getElementById('format-strike');
+
+  if (boldBtn) boldBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    wrapSelection('**', '**');
+  });
+  if (italicBtn) italicBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    wrapSelection('*', '*');
+  });
+  if (codeBtn) codeBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    wrapSelection('`', '`');
+  });
+  if (strikeBtn) strikeBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    wrapSelection('~~', '~~');
+  });
   
   // Add CSS for date divider and toast
   const style = document.createElement('style');

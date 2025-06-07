@@ -23,12 +23,13 @@
     "cookie": "^0.6.0",
     "drizzle-orm": "^0.29.5",
     "ejs": "^3.1.9",
-    "hono": "3.11.12"
+    "hono": "3.11.12",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.52.0",
     "ava": "^4.3.3",
-    "drizzle-kit": "^0.20.14",
+    "drizzle-kit": "^0.31.1",
     "nodemon": "^3.0.1"
   }
 }

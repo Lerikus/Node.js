@@ -20,7 +20,8 @@ export const messages = sqliteTable('messages', {
   content: text('content').notNull(),
   channelId: integer('channel_id').notNull().references(() => channels.id),
   userId: integer('user_id').notNull().references(() => users.id),
-  createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date())
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
+  imageUrl: text('imageUrl'),
 });
 
 export const sessions = sqliteTable('sessions', {
