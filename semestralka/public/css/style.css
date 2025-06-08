@@ -266,22 +266,42 @@ body {
   padding: 0 14px;
   gap: 10px;
   min-width: 0;
+  box-sizing: border-box;
+  /* Remove fixed height, use min-height and flex to match message input */
+  min-height: 32px;
+  max-height: 180px;
+  height: auto;
+  flex-shrink: 0;
+  transition: min-height 0.1s, max-height 0.1s;
+  margin-right: 0; /* Overlap the input border by 1px to remove the visible gap */
+  border-right: 1px solid #e0a96d; /* Restore right border for visual continuity */
 }
 
 #message-input.message-input-wysiwyg {
-  resize: vertical;
+  resize: none;
   width: 100%;
   min-height: 32px;
-  max-height: 80px;
-  border: 1px solid #e0a96d;
-  border-left: none;
-  border-radius: 0 6px 6px 0;
-  font-size: 1em;
+  max-height: 180px;
+  overflow-y: auto;
   background: #fff3e0;
-  padding: 8px 12px;
+  border: 1px solid #e0a96d;
   outline: none;
   color: #5a3200;
+  font-size: 1em;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  border-radius: 0 6px 6px 0;
   flex: 1 1 400px;
+  transition: min-height 0.1s;
+  display: block;
+  border-left: none; /* Remove left border for seamless join */
+}
+
+/* Make the message input auto-grow with content up to max-height */
+#message-input.message-input-wysiwyg:empty:before {
+  content: attr(placeholder);
+  color: #bfa77a;
+  pointer-events: none;
 }
 
 .toolbar-btn {
@@ -291,13 +311,19 @@ body {
   cursor: pointer;
   color: #a05a00;
   font-weight: normal;
-  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  width: 40px;
+  padding: 0;
 }
 
 .toolbar-btn svg {
-  display: inline;
-  margin: 0;
-  vertical-align: middle;
+  display: block;
+  margin: 0 auto;
+  width: 18px;
+  height: 18px;
 }
 
 .toolbar-btn[title="Bold"] { font-weight: bold; }
@@ -571,7 +597,60 @@ body {
   color: #1D1C1D;
 }
 
-/* Utilities */
+.image-preview-bubble {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #fff3e0;
+  border: 1px solid #e0a96d;
+  border-right: none;
+  border-radius: 4px 0 0 4px;
+  /* Responsive height and padding */
+  min-height: 32px;
+  max-height: 180px;
+  height: 100%;
+  padding: 0 6px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+.image-preview-img {
+  width: 28px;
+  height: 28px;
+  min-height: 28px;
+  max-height: 120px;
+  object-fit: cover;
+  border-radius: 3px;
+  border: none;
+  background: #fff3e0;
+  display: block;
+}
+
+@media (max-width: 600px) {
+  .image-preview-bubble {
+    min-height: 28px;
+    max-height: 120px;
+    padding: 0 4px;
+  }
+  .image-preview-img {
+    min-height: 24px;
+    max-height: 120px;
+  }
+}
+
+.image-preview {
+  display: flex;
+  align-items: stretch;
+  min-height: 32px;
+  max-height: 180px;
+  height: 100%;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.message-form-row > * {
+  align-self: stretch;
+}
+
 .inline-form {
   display: inline;
 }
@@ -602,5 +681,18 @@ main {
   }
   .header-inner, .main-content {
     padding: 0 2px;
+  }
+  .message-toolbar {
+    height: 40px;
+    padding: 0 6px;
+    gap: 4px;
+  }
+  .toolbar-btn {
+    height: 32px;
+    width: 32px;
+  }
+  .toolbar-btn svg {
+    width: 16px;
+    height: 16px;
   }
 }

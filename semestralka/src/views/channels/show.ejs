@@ -73,7 +73,7 @@
             <!-- Messages will be loaded here -->
           </div>
           
-          <form id="message-form" class="message-form" enctype="multipart/form-data" style="margin-top: 16px;">
+          <form id="message-form" class="message-form" enctype="multipart/form-data">
             <input type="hidden" id="channel-id" value="<%= channel.id %>">
             <input type="hidden" id="user-id" value="<%= user.id %>">
             <div class="message-form-row">
@@ -89,6 +89,7 @@
                   <input type="file" id="image-input" name="image" accept="image/*" style="display: none;">
                 </label>
               </div>
+              <div id="image-preview" class="image-preview"></div>
               <div id="message-input" contenteditable="true" class="message-input-wysiwyg"></div>
               <button type="submit" class="send-btn">Send</button>
             </div>
@@ -112,3 +113,50 @@
     <% } %>
   </div>
 </div>
+<script>
+  const imageInput = document.getElementById('image-input');
+  const imagePreview = document.getElementById('image-preview');
+
+  if (imageInput && imagePreview) {
+    imageInput.addEventListener('change', function(e) {
+      imagePreview.innerHTML = '';
+      if (this.files && this.files[0]) {
+        const file = this.files[0];
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          imagePreview.innerHTML = `
+            <span class="image-preview-bubble">
+              <img src="${ev.target.result}" alt="Image preview" class="image-preview-img" />
+              <button type="button" id="remove-image-btn" class="image-preview-remove-btn" title="Remove image">&times;</button>
+            </span>
+          `;
+          imagePreview.style.display = 'inline-block';
+          const removeBtn = document.getElementById('remove-image-btn');
+          if (removeBtn) {
+            removeBtn.addEventListener('click', function() {
+              imageInput.value = '';
+              imagePreview.innerHTML = '';
+              imagePreview.style.display = 'none';
+            });
+          }
+        };
+        reader.readAsDataURL(file);
+      } else {
+        imagePreview.style.display = 'none';
+      }
+    });
+  }
+
+  // Auto-resize message input height up to max-height
+  const messageInput = document.getElementById('message-input');
+  if (messageInput) {
+    function autoResize() {
+      messageInput.style.height = 'auto';
+      const maxHeight = 180;
+      messageInput.style.height = Math.min(messageInput.scrollHeight, maxHeight) + 'px';
+    }
+    messageInput.addEventListener('input', autoResize);
+    // Initial resize in case of pre-filled content
+    autoResize();
+  }
+</script>
