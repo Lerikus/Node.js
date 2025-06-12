@@ -26,5 +26,4 @@ export const db = drizzle(new Database(DB_PATH), { schema });
 try {
   migrate(db, { migrationsFolder });
 } catch (error) {
-  // Handle migration error if necessary
 }

@@ -21,7 +21,6 @@ export const populateUser = async (c, next) => {
       }
     }
   } catch (error) {
-    // Removed all console.error calls for production cleanliness.
   }
   
   await next();

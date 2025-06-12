@@ -17,7 +17,6 @@ export const homeController = {
           return c.redirect('/channels/new');
         }
       } catch (error) {
-        // Removed all console.error calls for production cleanliness.
       }
     }
     
